@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>管理画面 | 八幸</title>
+<link href="{{ asset('') }}public/backend/css/style.css" rel="stylesheet" />
+</head>
+
+<body>
+<table width="960" border="0" align="center" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td class="col_1">■八幸 Website 管理画面　＞　ログアウト</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center">ログアウトしました。</td>
+    </tr>
+    <tr>
+      <td align="center">&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><input type="button" onClick="location.href='{{route('backend.users.login')}}'" value="ログイン画面へ"></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>
