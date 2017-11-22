@@ -1,0 +1,792 @@
+<?php $__env->startSection('content'); ?>
+
+<table width="960" border="0" align="center" cellpadding="5" cellspacing="0">
+  <tbody>
+    <tr>
+      <td width="150%" class="col_1">■敷島堂 Website 管理画面　＞　「お知らせ」管理　＞　情報編集</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+    </tr>
+    <?php echo Form::open(array('route' => ['backend.infos.edit', $info_id], 'class' => 'form-horizontal', 'method' => 'post', 'enctype'=>'multipart/form-data', 'accept-charset'=>'utf-8')); ?>
+
+    <tr>
+      <td><table width="100%" border="1" cellspacing="0" cellpadding="5">
+        <tbody>
+          <tr>
+            <td colspan="2" class="col_3">タイトル <span class="required">必須</span></td>
+            <td><input name="info_title" type="text" id="info_title" size="60" value="<?php if(old('info_title')): ?><?php echo e(old('info_title')); ?><?php else: ?><?php echo e($info->info_title); ?><?php endif; ?>">
+                <?php if($errors->first('info_title')): ?>
+                <div class="error-text"> <?php echo e($errors->first('info_title')); ?></div>
+                <?php endif; ?>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="col_3">情報登録日 <span class="required">必須</span></td>
+            <td>
+            <select name="info_year" id="info_year">
+                <option value="">----年</option>
+                <?php for( $y=(date('Y')-3); $y<= (date('Y') + 3); $y++ ): ?>
+               
+                <option value="<?php echo e($y); ?>" <?php if( (old('info_year') == $y) || split_date($info->info_date, 'Y') == $y ): ?> selected <?php endif; ?> > <?php echo e($y); ?>年</option>
+                
+                <?php endfor; ?>
+              </select>
+                <select name="info_month" id="info_month">
+                <option value="">--月</option>
+                <?php for( $m=1; $m<= 12; $m++ ): ?>
+                  <option value="<?php echo e(c2digit($m)); ?>" <?php if(old('info_month') == c2digit($m) || split_date($info->info_date, 'm') == c2digit($m)): ?> selected <?php endif; ?> ><?php echo e(c2digit($m)); ?>月</option>
+                <?php endfor; ?>
+                </select>
+                <select name="info_day" id="info_day">
+                <option value="">--日</option>
+                <?php for( $d=1; $d<= 31; $d++ ): ?>
+                  <option value="<?php echo e(c2digit($d)); ?>" <?php if(old('info_day') == c2digit($d) || split_date($info->info_date, 'd') == c2digit($d)): ?> selected <?php endif; ?> ><?php echo e(c2digit($d)); ?>日</option>
+                <?php endfor; ?>
+              </select>
+              　
+              <input type="button" name="btn_now" id="btn_now" value="今日">
+               <?php if($errors->first('info_year')): ?>
+                <div class="error-text"> <?php echo e($errors->first('info_year')); ?></div>
+                <?php endif; ?>
+
+                <?php if($errors->first('info_month')): ?>
+                <div class="error-text"> <?php echo e($errors->first('info_month')); ?></div>
+                <?php endif; ?>
+
+                <?php if($errors->first('info_day')): ?>
+                <div class="error-text"> <?php echo e($errors->first('info_day')); ?></div>
+                <?php endif; ?>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="col_3">サムネイル画像</td>
+            <td>
+              <input type="radio" id="info_list_img_radio1" name="info_list_img_radio" value="1" <?php if(old('info_list_img_radio') == 1): ?> checked <?php else: ?> checked <?php endif; ?> >
+                登録されている画像をそのまま利用 → 
+              <?php if(old('info_list_img')): ?>
+                <a href="<?php echo e(asset('public')); ?><?php echo e(old('info_list_img')); ?>"  target="_blank" title="">画像ビュー</a>
+              <?php elseif(!empty($info->info_list_img)): ?>
+                <a href="<?php echo e(asset('public')); ?><?php echo e($info->info_list_img); ?>" target="_blank" title="">画像ビュー</a>
+              <?php else: ?>
+                画像なし
+              <?php endif; ?>
+              <br>
+              <input type="radio" id="info_list_img_radio2" name="info_list_img_radio" value="2" <?php if(old('info_list_img_radio') == 2): ?> checked <?php endif; ?> >
+                次の画像に差し替える :               
+              <input type="file" name="info_list_img" id="info_list_img" value="<?php echo e(old('info_list_img')); ?>">
+              <input type="button" id="info_list_img_del" class="btn-reset" value="X" title="リセット">
+              <br>
+              <input type="radio" id="info_list_img_radio3" name="info_list_img_radio" value="3" <?php if(old('info_list_img_radio') == 3): ?> checked <?php endif; ?> >
+                登録されている画像を削除する
+
+              <input type="hidden" name="info_list_img_old" value="<?php if(old('info_list_img')): ?><?php echo e(old('info_list_img')); ?><?php else: ?><?php echo e($info->info_list_img); ?><?php endif; ?>">
+              　※正方形の画像を指定
+                <?php if($errors->first('info_list_img')): ?>
+                <div class="error-text"> <?php echo e($errors->first('info_list_img')); ?></div>
+                <?php endif; ?>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="col_3">TOP用文章</td>
+            <td><input name="info_list_txt" type="text" id="info_list_txt" size="70" value="<?php if(old('info_list_txt')): ?><?php echo e(old('info_list_txt')); ?><?php else: ?><?php echo e($info->info_list_txt); ?><?php endif; ?>">
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="col_3">お知らせカテゴリ</td>
+            <td><input type="radio" name="info_cat" id="info_cat1" value="1" <?php if(old('info_cat') == 1 || $info->info_cat == 1): ?> checked <?php endif; ?> >
+              お知らせ　　　
+              <input type="radio" name="info_cat" id="info_cat2" value="2" <?php if(old('info_cat') == 2 || $info->info_cat == 2): ?> checked <?php endif; ?>>
+              イベント　　　
+              <input type="radio" name="info_cat" id="info_cat3" value="3" <?php if(old('info_cat') == 3 || $info->info_cat == 3): ?> checked <?php endif; ?>>
+              お勧め商品</td>
+          </tr>
+          <tr>
+            <td colspan="2" class="col_3">タイプ <span class="required">必須</span></td>
+            <td><table width="100%" border="0" cellspacing="0" cellpadding="3">
+              <tbody>
+                <tr>
+                  <td width="1%"><input type="radio" name="info_type" id="info_type1" value="1" <?php if(old('info_type') == 1 || $info->info_type == 1): ?> checked <?php endif; ?> ></td>
+                  <td>タイプ1：タイトルをクリックすると指定URLを表示</td>
+                </tr>
+                <tr>
+                  <td width="1%"><input type="radio" name="info_type" id="info_type2" value="2" <?php if(old('info_type') == 2 || $info->info_type == 2): ?> checked <?php endif; ?> ></td>
+                  <td>タイプ2：タイトルをクリックすると指定ファイルを表示</td>
+                </tr>
+                <tr>
+                  <td width="1%"><input type="radio" name="info_type" id="info_type3" value="3" <?php if(old('info_type') == 3 || $info->info_type == 3): ?> checked <?php endif; ?> ></td>
+                  <td>タイプ3：タイトルをクリックすると詳細ページを表示</td>
+                </tr>
+              </tbody>
+            </table>
+                <?php if($errors->first('info_type')): ?>
+                <div class="error-text"> <?php echo e($errors->first('info_type')); ?></div>
+                <?php endif; ?>
+            </td>
+          </tr>
+          <tr>
+            <td width="10%" class="col_3">タイプ1</td>
+            <td width="15%" class="col_3">リンク先URL</td>
+            <td>
+              <input name="info1_url" type="text" id="info1_url" size="60" value="<?php if(old('info1_url')): ?><?php echo e(old('info1_url')); ?><?php else: ?><?php echo e($info->info1_url); ?><?php endif; ?>">
+                <?php if($errors->first('info1_url')): ?>
+                <div class="error-text"> <?php echo e($errors->first('info1_url')); ?></div>
+                <?php endif; ?>
+              </td>
+          </tr>
+          <tr>
+            <td width="10%" class="col_3">タイプ2</td>
+            <td width="15%" class="col_3">表示ファイル</td>
+            <td>
+              <input type="radio" id="info2_file_radio1" name="info2_file_radio" value="1" <?php if(old('info2_file_radio') == 1): ?> checked <?php else: ?> checked <?php endif; ?> >
+                登録されているファイルをそのまま利用 → 
+              <?php if(old('info2_file')): ?>
+                <a href="<?php echo e(asset('public')); ?><?php echo e(old('info2_file')); ?>"  target="_blank" title="">ファイルビュー</a>
+              <?php elseif(!empty($info->info2_file)): ?>
+                <a href="<?php echo e(asset('public')); ?><?php echo e($info->info2_file); ?>" target="_blank" title="">ファイルビュー</a>
+              <?php else: ?>
+                ファイルなし
+              <?php endif; ?>
+              <br>
+              <input type="radio" id="info2_file_radio2" name="info2_file_radio" value="2" <?php if(old('info2_file_radio') == 2): ?> checked <?php endif; ?> >
+                次のファイルに差し替える : 
+              <input type="file" name="info2_file" id="info2_file" value="<?php echo e(old('info2_file')); ?>">
+              <input type="button" id="info2_file_del" class="btn-reset" value="X" title="リセット">
+              <br>
+              <input type="radio" id="info2_file_radio3" name="info2_file_radio" value="3" <?php if(old('info2_file_radio') == 3): ?> checked <?php endif; ?> >
+                登録されているファイルを削除する
+
+              <input type="hidden" name="info2_file_old" value="<?php if(old('info2_file')): ?><?php echo e(old('info2_file')); ?><?php else: ?><?php echo e($info->info2_file); ?><?php endif; ?>">
+              <?php if($errors->first('info2_file')): ?>
+                <div class="error-text"> <?php echo e($errors->first('info2_file')); ?></div>
+              <?php endif; ?>
+            </td>
+          </tr>
+          <tr>
+            <td width="10%" rowspan="4" class="col_3">タイプ3</td>
+            <td width="15%" class="col_3">詳細</td>
+            <td><textarea name="info3_contents" id="info3_contents" class="info3_contents" rows="4" cols="50" >
+              <?php if(old('info3_contents')): ?><?php echo e(old('info3_contents')); ?><?php else: ?><?php echo e($info->info3_contents); ?><?php endif; ?> </textarea>
+              <?php if($errors->first('info3_contents')): ?>
+                <div class="error-text"> <?php echo e($errors->first('info3_contents')); ?></div>
+              <?php endif; ?>
+              </td>
+          </tr>
+
+          <tr>
+            <td width="15%" class="col_3">画像</td>
+            <td >
+              <input type="radio" id="info3_img_radio1" name="info3_img_radio" value="1" <?php if(old('info3_img_radio') == 1): ?> checked <?php else: ?> checked <?php endif; ?> >
+                登録されている画像をそのまま利用 → 
+                <?php if(old('info3_img')): ?>
+                <a href="<?php echo e(asset('public')); ?><?php echo e(old('info3_img')); ?>"  target="_blank" title="">画像ビュー</a>
+                <?php elseif(!empty($info->info3_img)): ?>
+                <a href="<?php echo e(asset('public')); ?><?php echo e($info->info3_img); ?>" target="_blank" title="">画像ビュー</a>
+                <?php else: ?>
+                画像なし
+                <?php endif; ?>
+                <br>
+                <input type="radio" id="info3_img_radio2" name="info3_img_radio" value="2" <?php if(old('info3_img_radio') == 2): ?> checked <?php endif; ?> >
+                次の画像に差し替える :
+                <input type="file" name="info3_img" id="info3_img" value="<?php echo e(old('info3_img')); ?>">
+                <input type="button" id="info3_img_del" class="btn-reset" value="X" title="リセット">
+                <br>
+                <input type="radio" id="info3_img_radio3" name="info3_img_radio" value="3" <?php if(old('info3_img_radio') == 3): ?> checked <?php endif; ?> >
+                登録されている画像を削除する
+                <input type="hidden" name="info3_img_old" value="<?php if(old('info3_img')): ?><?php echo e(old('info3_img')); ?><?php else: ?><?php echo e($info->info3_img); ?><?php endif; ?>">
+            </td>
+          </tr>
+         
+          <tr>
+            <td width="15%" class="col_3">ファイル</td>
+            <td >
+              <input type="radio" id="info3_file_radio1" name="info3_file_radio" value="1" <?php if(old('info3_file_radio') == 1): ?> checked <?php else: ?> checked <?php endif; ?> >
+                登録されているファイルをそのまま利用 → 
+                <?php if(old('info3_file')): ?>
+                <a href="<?php echo e(asset('public')); ?><?php echo e(old('info3_file')); ?>"  target="_blank">ファイルビュー</a>
+                <?php elseif(!empty($info->info3_file)): ?>
+                <a href="<?php echo e(asset('public')); ?><?php echo e($info->info3_file); ?>" target="_blank">ファイルビュー</a>
+                <?php else: ?>
+                ファイルなし
+                <?php endif; ?>
+                <br>
+                <input type="radio" id="info3_file_radio2" name="info3_file_radio" value="2" <?php if(old('info3_file_radio') == 2): ?> checked <?php endif; ?> >
+                次のファイルに差し替える :
+                <input type="file" name="info3_file" id="info3_file" value="<?php echo e(old('info3_file')); ?>">
+                <input type="button" id="info3_file_del" class="btn-reset" value="X" title="リセット">
+                <br>
+                <input type="radio" id="info3_file_radio3" name="info3_file_radio" value="3" <?php if(old('info3_file_radio') == 3): ?> checked <?php endif; ?> >
+                登録されているファイルを削除する
+                <input type="hidden" name="info3_file_old" value="<?php if(old('info3_file')): ?><?php echo e(old('info3_file')); ?><?php else: ?><?php echo e($info->info3_file); ?><?php endif; ?>">
+            </td>
+          </tr>
+          <tr>
+            <td class="col_3">　└ファイル名</td>
+            <td><input name="info3_filename" type="text" id="info3_filename" size="60" value="<?php if(old('info3_filename')): ?><?php echo e(old('info3_filename')); ?><?php else: ?><?php echo e($info->info3_filename); ?><?php endif; ?>"></td>
+          </tr>          
+
+          <tr>
+            <td colspan="2" class="col_3">表示／非表示</td>
+            <td><input type="checkbox" name="info_dspl_flag" id="info_dspl_flag" value="1" <?php if( !empty(old('info_dspl_flag')) && old('info_dspl_flag') == 1 ): ?> checked <?php elseif($info->info_dspl_flag == 1): ?> checked <?php endif; ?> >一時的に非表示にする</td>
+          </tr>
+          <tr>
+            <td colspan="2" class="col_3">TOP表示設定</td>
+            <td><input type="checkbox" name="info_top_flag" value="1" id="info_top_flag" <?php if( !empty(old('info_top_flag')) && old('info_top_flag') == 1 || $info->info_top_flag == 1): ?> checked <?php endif; ?> >
+            常にTOPに表示する</td>
+          </tr>
+          <tr>
+            <td width="10%" rowspan="2" class="col_3">タイマー</td>
+            <td width="15%" class="col_3">開始日時：</td>
+            <td>
+              <select name="year_start" id="year_start">
+                <option value="" <?php if(old('year_start') == ''): ?> selected <?php endif; ?> >----年</option>
+                <?php for( $y=(date('Y')-3); $y<= (date('Y') + 3); $y++ ): ?>
+                <option value="<?php echo e($y); ?>" <?php if(old('year_start') == $y || split_date($info->info_start, 'Y') == $y): ?> selected <?php endif; ?> ><?php echo e($y); ?>年</option>
+                <?php endfor; ?>
+              </select>
+                <select name="month_start" id="month_start">
+                <option value="" <?php if(old('month_start') == ''): ?> selected <?php endif; ?> >--月</option>
+                <?php for( $m=1; $m<= 12; $m++ ): ?>
+                  <option value="<?php echo e(c2digit($m)); ?>" <?php if(old('month_start') == c2digit($m) || split_date($info->info_start, 'm') == c2digit($m) ): ?> selected <?php endif; ?> ><?php echo e(c2digit($m)); ?>月</option>
+                <?php endfor; ?>
+              </select>
+            <select name="day_start" id="day_start">
+            <option value="">--日</option>
+            <?php for( $d=1; $d<= 31; $d++ ): ?>
+              <option value="<?php echo e(c2digit($d)); ?>" <?php if(old('day_start') == c2digit($d) || split_date($info->info_start, 'd') == c2digit($d) ): ?> selected <?php endif; ?> ><?php echo e(c2digit($d)); ?>日</option>
+            <?php endfor; ?>
+            </select>
+            　
+            <select name="hour_start" id="hour_start">
+            <option value="" <?php if(old('hour_start') == '' ): ?> selected <?php endif; ?>>--時</option>
+            <option value="00" <?php if(old('hour_start') == '00' || old('hour_start') == '0' || split_date($info->info_start, 'H') == '0'): ?> selected <?php endif; ?>>00時</option>
+             <?php for( $hour=1; $hour<= 23; $hour++ ): ?>
+              <option value="<?php echo e(c2digit($hour)); ?>" <?php if(old('hour_start') == c2digit($hour) || split_date($info->info_start, 'H') == c2digit($hour)): ?> selected <?php endif; ?> ><?php echo e(c2digit($hour)); ?>時</option>
+            <?php endfor; ?>
+            </select>
+            <select name="minute_start" id="minute_start">
+            <option value="" <?php if(old('minute_start') == '' ): ?> selected <?php endif; ?> >--分</option>
+            <option value="00" <?php if(old('minute_start') == '00' || old('minute_start') == '0' || split_date($info->info_start, 'i') == '0'): ?> selected <?php endif; ?> >00分</option>
+            <?php for( $min=1; $min<= 59; $min++ ): ?>
+              <option value="<?php echo e(c2digit($min)); ?>" <?php if(old('minute_start') == c2digit($min) || split_date($info->info_start, 'i') == c2digit($min)): ?> selected <?php endif; ?> ><?php echo e(c2digit($min)); ?>分</option>
+            <?php endfor; ?>
+            </select>
+        <br>
+        </td>
+      </tr>
+      
+      <tr>
+      <td width="15%" class="col_3">終了日時：</td>
+      <td>
+          <select name="year_end" id="year_end">
+            <option value="" <?php if(old('year_end') == ''): ?> selected <?php endif; ?> >----年</option>
+            <?php for( $y=(date('Y')-3); $y<= (date('Y') + 3); $y++ ): ?>
+            <option value="<?php echo e($y); ?>" <?php if(old('year_end') == $y || split_date($info->info_end, 'Y') == $y): ?> selected <?php endif; ?> ><?php echo e($y); ?>年</option>
+            <?php endfor; ?>
+          </select>
+            <select name="month_end" id="month_end">
+            <option value="" <?php if(old('month_end') == '' ): ?> selected <?php endif; ?>>--月</option>
+            <?php for( $m=1; $m<= 12; $m++ ): ?>
+              <option value="<?php echo e(c2digit($m)); ?>" <?php if(old('month_end') == c2digit($m) || split_date($info->info_end, 'm') == c2digit($m)): ?> selected <?php endif; ?> ><?php echo e(c2digit($m)); ?>月</option>
+            <?php endfor; ?>
+            </select>
+            <select name="day_end" id="day_end">
+            <option value="" <?php if(old('day_end') == '' ): ?> selected <?php endif; ?>>--日</option>
+            <?php for( $d=1; $d<= 31; $d++ ): ?>
+              <option value="<?php echo e(c2digit($d)); ?>" <?php if(old('day_end') == c2digit($d) || split_date($info->info_end, 'd') == c2digit($d)): ?> selected <?php endif; ?> ><?php echo e(c2digit($d)); ?>日</option>
+            <?php endfor; ?>
+            </select>
+          　
+          <select name="hour_end" id="hour_end">
+            <option value="" <?php if(old('hour_end') == '' ): ?> selected <?php endif; ?> >--時</option>
+            <option value="00" <?php if(old('hour_end') == '00' || old('hour_end') == '0' || split_date($info->info_end, 'H') == '0'): ?> selected <?php endif; ?> >00時</option>
+            <?php for( $hour=1; $hour<= 23; $hour++ ): ?>
+              <option value="<?php echo e(c2digit($hour)); ?>" <?php if(old('hour_end') == c2digit($hour) || split_date($info->info_end, 'H') == c2digit($hour)): ?> selected <?php endif; ?> ><?php echo e(c2digit($hour)); ?>時</option>
+            <?php endfor; ?>
+          </select>
+          <select name="minute_end" id="minute_end">
+            <option value="" <?php if(old('minute_end') == '' ): ?> selected <?php endif; ?> >--分</option>
+            <option value="00" <?php if(old('minute_end') == '00' || old('minute_end') == '0' || split_date($info->info_end, 'i') == '0'): ?> selected <?php endif; ?> >00分</option>
+             <?php for( $min=1; $min<= 59; $min++ ): ?>
+              <option value="<?php echo e(c2digit($min)); ?>" <?php if(old('minute_end') == c2digit($min) || split_date($info->info_end, 'i') == c2digit($min)): ?> selected <?php endif; ?> ><?php echo e(c2digit($min)); ?>分</option>
+            <?php endfor; ?>
+          </select>
+            </td>
+          </tr>
+        </tbody>
+      </table></td>
+    </tr>
+    <tr>
+      <td align="center"><input type="submit" id="btn-submit" value="変更する">
+        　　　　　
+      <input type="reset" name="reset" id="reset" value="クリア"></td>
+    </tr>
+    <tr>
+      <td align="center">&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center"><input type="button" onClick="location.href='<?php echo e(route('backend.infos.index')); ?>'" value="「お知らせ」一覧に戻る"></td>
+    </tr>
+    <?php echo Form::close(); ?>
+
+    <tr>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+
+<script>
+  $(document).ready(function(){
+    $('.btn-reset').addClass('btn-hide'); 
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+
+    $("#btn_now").click(function(){
+        $('#info_year option[value="' + year + '"]').prop('selected', true);
+        $('#info_month option[value="' + c2Digit(month) + '"]').prop('selected', true);
+        $('#info_day option[value="' + c2Digit(day) + '"]').prop('selected', true);
+    });
+  });
+  
+  $('#info_list_img_del').click(function(){
+    var $el = $('#info_list_img');
+    $el.wrap('<form>').closest('form').get(0).reset();
+    $el.unwrap();
+    $('#info_list_img_del').addClass('btn-hide');
+    $('#info_list_img').val('');
+  });
+
+  $('#info_list_img').change(function(){
+    $( "#info_list_img_radio2" ).prop( "checked", true );
+    if($(this).length > 0){
+      $('#info_list_img_del').removeClass('btn-hide');
+    }   
+  });
+
+
+  $('#info2_file_del').click(function(){
+    var $el = $('#info2_file');
+    $el.wrap('<form>').closest('form').get(0).reset();
+    $el.unwrap();
+    $('#info2_file_del').addClass('btn-hide');
+    $('#info2_file').val('');
+  });
+
+  $('#info2_file').change(function(){
+    $( "#info2_file_radio2" ).prop( "checked", true );
+    if($(this).length > 0){
+      $('#info2_file_del').removeClass('btn-hide');
+    }   
+  });
+
+  $('#info3_img1_del').click(function(){
+    var $el = $('#info3_img1');
+    $el.wrap('<form>').closest('form').get(0).reset();
+    $el.unwrap();
+    $('#info3_img1_del').addClass('btn-hide');
+    $('#info3_img1').val('');
+  });
+
+  $('#info3_img1').change(function(){
+    $( "#info3_img1_radio2" ).prop( "checked", true );
+    if($(this).length > 0){
+      $('#info3_img1_del').removeClass('btn-hide');
+    }   
+  });
+
+  $('#info3_img2_del').click(function(){
+    var $el = $('#info3_img2');
+    $el.wrap('<form>').closest('form').get(0).reset();
+    $el.unwrap();
+    $('#info3_img2_del').addClass('btn-hide');
+    $('#info3_img2').val('');
+  });
+
+  $('#info3_img2').change(function(){
+    $( "#info3_img2_radio2" ).prop( "checked", true );
+    if($(this).length > 0){
+      $('#info3_img2_del').removeClass('btn-hide');
+    }   
+  });
+
+  $('#info3_img3_del').click(function(){
+    var $el = $('#info3_img3');
+    $el.wrap('<form>').closest('form').get(0).reset();
+    $el.unwrap();
+    $('#info3_img3_del').addClass('btn-hide');
+    $('#info3_img3').val('');
+  });
+
+  $('#info3_img3').change(function(){
+    $( "#info3_img3_radio2" ).prop( "checked", true );
+    if($(this).length > 0){
+      $('#info3_img3_del').removeClass('btn-hide');
+    }   
+  });
+
+  $('#info3_img4_del').click(function(){
+    var $el = $('#info3_img1');
+    $el.wrap('<form>').closest('form').get(0).reset();
+    $el.unwrap();
+    $('#info3_img4_del').addClass('btn-hide');
+    $('#info3_img4').val('');
+  });
+
+  $('#info3_img4').change(function(){
+    $( "#info3_img4_radio2" ).prop( "checked", true );
+    if($(this).length > 0){
+      $('#info3_img4_del').removeClass('btn-hide');
+    }   
+  });
+
+  $('#info3_img5_del').click(function(){
+    var $el = $('#info3_img5');
+    $el.wrap('<form>').closest('form').get(0).reset();
+    $el.unwrap();
+    $('#info3_img5_del').addClass('btn-hide');
+    $('#info3_img5').val('');
+  });
+
+  $('#info3_img5').change(function(){
+    $( "#info3_img5_radio2" ).prop( "checked", true );
+    if($(this).length > 0){
+      $('#info3_img5_del').removeClass('btn-hide');
+    }   
+  });
+
+  $('#info3_file1_del').click(function(){
+    var $el = $('#info3_file1');
+    $el.wrap('<form>').closest('form').get(0).reset();
+    $el.unwrap();
+    $('#info3_file1_del').addClass('btn-hide');
+    $('#info3_file1').val('');
+  });
+
+  $('#info3_file1').change(function(){
+    $( "#info3_file1_radio2" ).prop( "checked", true );
+    if($(this).length > 0){
+      $('#info3_file1_del').removeClass('btn-hide');
+    }   
+  });
+
+  $('#info3_file2_del').click(function(){
+    var $el = $('#info3_file2');
+    $el.wrap('<form>').closest('form').get(0).reset();
+    $el.unwrap();
+    $('#info3_file2_del').addClass('btn-hide');
+    $('#info3_file2').val('');
+  });
+
+  $('#info3_file2').change(function(){
+    $( "#info3_file2_radio2" ).prop( "checked", true );
+    if($(this).length > 0){
+      $('#info3_file2_del').removeClass('btn-hide');
+    }   
+  });
+
+  $('#info3_file3_del').click(function(){
+    var $el = $('#info3_file3');
+    $el.wrap('<form>').closest('form').get(0).reset();
+    $el.unwrap();
+    $('#info3_file3_del').addClass('btn-hide');
+    $('#info3_file3').val('');
+  });
+
+  $('#info3_file3').change(function(){
+    $( "#info3_file3_radio2" ).prop( "checked", true );
+    if($(this).length > 0){
+      $('#info3_file3_del').removeClass('btn-hide');
+    }   
+  });
+
+  $('#info3_file4_del').click(function(){
+    var $el = $('#info3_file4');
+    $el.wrap('<form>').closest('form').get(0).reset();
+    $el.unwrap();
+    $('#info3_file4_del').addClass('btn-hide');
+    $('#info3_file4').val('');
+  });
+
+  $('#info3_file4').change(function(){
+    $( "#info3_file4_radio2" ).prop( "checked", true );
+    if($(this).length > 0){
+      $('#info3_file4_del').removeClass('btn-hide');
+    }   
+  });
+
+    $('#info3_file5_del').click(function(){
+    var $el = $('#info3_file5');
+    $el.wrap('<form>').closest('form').get(0).reset();
+    $el.unwrap();
+    $('#info3_file5_del').addClass('btn-hide');
+    $('#info3_file5').val('');
+  });
+
+  $('#info3_file5').change(function(){
+    $( "#info3_file5_radio2" ).prop( "checked", true );
+    if($(this).length > 0){
+      $('#info3_file5_del').removeClass('btn-hide');
+    }   
+  });
+
+  $('#info_list_img_remove').on('change', function(){
+   if(this.checked)
+    {
+      $('#info_list_img').prop( "disabled", true );
+    }else{
+      $('#info_list_img').prop( "disabled", false );
+    }
+  });
+
+  $('#info2_file_remove').on('change', function(){
+   if(this.checked)
+    {
+      $('#info2_file').prop( "disabled", true );
+    }else{
+      $('#info2_file').prop( "disabled", false );
+    }
+  });
+
+  $('#info3_img_remove').on('change', function(){
+   if(this.checked)
+    {
+      $('#info3_img').prop( "disabled", true );
+    }else{
+      $('#info3_img').prop( "disabled", false );
+    }
+  });
+
+  $('#info3_file_remove').on('change', function(){
+   if(this.checked)
+    {
+      $('#info3_file').prop( "disabled", true );
+    }else{
+      $('#info3_file').prop( "disabled", false );
+    }
+  });
+
+  function c2Digit(num){
+    return (num < 10? '0' : '') + num;
+  }
+</script>
+
+<script>
+  tinymce.init({
+    selector: '#info3_contents',
+    language: 'ja',
+    height: 320,
+    menubar: false,
+    forced_root_block : "", 
+    force_br_newlines : true,
+    force_p_newlines : false,
+    fontsize_formats: "8pt 9pt 10pt 11pt 12pt 13pt 14pt 15pt 16pt 17pt 18pt 19pt 20pt 21pt 22pt 23pt 24pt 25pt 26pt 27pt 28pt 29pt 30pt 31pt 32pt",
+
+    plugins: 'print preview fullpage searchreplace autolink directionality visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists textcolor wordcount imagetools contextmenu colorpicker textpattern',
+
+    toolbar: 'bold italic | strikethrough forecolor backcolor | fontsizeselect | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | imageupload',
+    content_css: [
+    '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+    '//www.tinymce.com/css/codepen.min.css'
+    ],
+    setup: function(editor) {
+            var inp = $('<input id="tinymce-uploader" type="file" name="pic" accept="image/*" style="display:none">');
+            $(editor.getElement()).parent().append(inp);
+
+            inp.on("change",function(){
+                var input = inp.get(0);
+                var file = input.files[0];
+                var fr = new FileReader();
+                fr.onload = function() {
+                    var img = new Image();
+                    img.src = fr.result;
+                    editor.insertContent('<img src="'+img.src+'"/>');
+                    inp.val('');
+                }
+                fr.readAsDataURL(file);
+            });
+
+            editor.addButton( 'imageupload', {
+                text:"画像",
+                icon: false,
+                title:"画像を挿入する",
+                onclick: function(e) {
+                    inp.trigger('click');
+                }
+            });
+        },
+  /*  textcolor_cols: "20",
+    textcolor_rows: "10",
+    textcolor_map: [
+        "FFFFFF", "White",
+        "000000", "Black",
+        "993300", "Burnt orange",
+        "333300", "Dark olive",
+        "003300", "Dark green",
+        "003366", "Dark azure",
+        "000080", "Navy Blue",
+        "333399", "Indigo",
+        "333333", "Very dark gray",
+        "800000", "Maroon",
+        "FF6600", "Orange",
+        "808000", "Olive",
+        "008000", "Green",
+        "008080", "Teal",
+        "0000FF", "Blue",
+        "666699", "Grayish blue",
+        "808080", "Gray",
+        "FF0000", "Red",
+        "FF9900", "Amber",
+        "99CC00", "Yellow green",
+        "339966", "Sea green",
+        "33CCCC", "Turquoise",
+        "3366FF", "Royal blue",
+        "800080", "Purple",
+        "999999", "Medium gray",
+        "FF00FF", "Magenta",
+        "FFCC00", "Gold",
+        "FFFF00", "Yellow",
+        "00FF00", "Lime",
+        "00FFFF", "Aqua",
+        "00CCFF", "Sky blue",
+        "993366", "Red violet",
+        "FF99CC", "Pink",
+        "FFCC99", "Peach",
+        "FFFF99", "Light yellow",
+        "CCFFCC", "Pale green",
+        "CCFFFF", "Pale cyan",
+        "99CCFF", "Light sky blue",
+        "CC99FF", "Plum",
+        "CD5C5C", "IndianRed",
+        "F08080", "LightCoral",
+        "FA8072", "Salmon",
+        "E9967A", "DarkSalmon",
+        "FFA07A", "LightSalmon",
+        "DC143C", "Crimson",
+        "B22222", "FireBrick",
+        "8B0000", "DarkRed",
+        "FFB6C1", "LightPink",
+        "FF69B4", "HotPink",
+        "FF1493", "DeepPink",
+        "C71585", "MediumVioletRed",
+        "DB7093", "PaleVioletRed",
+        "FF7F50", "Coral",
+        "FF6347", "Tomato",
+        "FF4500", "OrangeRed",
+        "FF8C00", "DarkOrange",
+        "FFFFE0", "LightYellow",
+        "FFFACD", "LemonChiffon",
+        "FAFAD2", "LightGoldenrodYellow",
+        "FFEFD5", "PapayaWhip",
+        "FFE4B5", "Moccasin",
+        "FFDAB9", "PeachPuff",
+        "EEE8AA", "PaleGoldenrod",
+        "F0E68C", "Khaki",
+        "BDB76B", "DarkKhaki",
+        "E6E6FA", "Lavender",
+        "D8BFD8", "Thistle",
+        "DDA0DD", "Plum",
+        "EE82EE", "Violet",
+        "DA70D6", "Orchid",
+        "FF00FF", "Fuchsia",
+        "FF00FF", "Magenta",
+        "BA55D3", "MediumOrchid",
+        "9370DB", "MediumPurple",
+        "9966CC", "Amethyst",
+        "8A2BE2", "BlueViolet",
+        "9400D3", "DarkViolet",
+        "9932CC", "DarkOrchid",
+        "8B008B", "DarkMagenta",
+        "6A5ACD", "SlateBlue",
+        "483D8B", "DarkSlateBlue",
+        "7B68EE", "MediumSlateBlue",
+        "ADFF2F", "GreenYellow",
+        "7FFF00", "Chartreuse",
+        "7CFC00", "LawnGreen",
+        "32CD32", "LimeGreen",
+        "98FB98", "PaleGreen",
+        "90EE90", "LightGreen",
+        "00FA9A", "MediumSpringGreen",
+        "00FF7F", "SpringGreen",
+        "3CB371", "MediumSeaGreen",
+        "2E8B57", "SeaGreen",
+        "228B22", "ForestGreen",
+        "006400", "DarkGreen",
+        "9ACD32", "YellowGreen",
+        "6B8E23", "OliveDrab",
+        "556B2F", "DarkOliveGreen",
+        "66CDAA", "MediumAquamarine",
+        "8FBC8F", "DarkSeaGreen",
+        "20B2AA", "LightSeaGreen",
+        "008B8B", "DarkCyan",
+        "008080", "Teal",
+        "E0FFFF", "LightCyan",
+        "AFEEEE", "PaleTurquoise",
+        "7FFFD4", "Aquamarine",
+        "48D1CC", "MediumTurquoise",
+        "00CED1", "DarkTurquoise",
+        "5F9EA0", "CadetBlue",
+        "4682B4", "SteelBlue",
+        "B0C4DE", "LightSteelBlue",
+        "B0E0E6", "PowderBlue",
+        "ADD8E6", "LightBlue",
+        "87CEEB", "SkyBlue",
+        "87CEFA", "LightSkyBlue",
+        "00BFFF", "DeepSkyBlue",
+        "1E90FF", "DodgerBlue",
+        "6495ED", "CornflowerBlue",
+        "7B68EE", "MediumSlateBlue",
+        "4169E1", "RoyalBlue",
+        "0000CD", "MediumBlue",
+        "00008B", "DarkBlue",
+        "000080", "Navy",
+        "191970", "MidnightBlue",
+        "FFF8DC", "Cornsilk",
+        "FFF8DC", "Cornsilk", 
+        "FFEBCD", "BlanchedAlmond",
+        "FFE4C4", "Bisque",
+        "FFDEAD", "NavajoWhite", 
+        "F5DEB3", "Wheat",
+        "DEB887", "BurlyWood", 
+        "D2B48C", "Tan",
+        "BC8F8F", "RosyBrown",
+        "F4A460", "SandyBrown",
+        "DAA520", "Goldenrod",
+        "B8860B", "DarkGoldenrod",
+        "CD853F", "Peru",
+        "D2691E", "Chocolate",
+        "8B4513", "SaddleBrown",
+        "A0522D", "Sienna",
+        "A52A2A", "Brown",
+        "800000", "Maroon",
+        "FFFAFA", "Snow",
+        "F0FFF0", "Honeydew",
+        "F5FFFA", "MintCream",
+        "F0FFFF", "Azure",
+        "F0F8FF", "AliceBlue",
+        "F8F8FF", "GhostWhite",
+        "F5F5F5", "WhiteSmoke",
+        "FFF5EE", "Seashell",
+        "F5F5DC", "Beige",
+        "FDF5E6", "OldLace",
+        "FFFAF0", "FloralWhite", 
+        "FFFFF0", "Ivory",
+        "FAEBD7", "AntiqueWhite",
+        "FAF0E6", "Linen",
+        "FFF0F5", "LavenderBlush",
+        "FFE4E1", "MistyRose",
+        "DCDCDC", "Gainsboro",
+        "D3D3D3", "LightGrey",
+        "C0C0C0", "Silver",
+        "A9A9A9", "DarkGray",
+        "696969", "DimGray",
+        "778899", "LightSlateGray",
+        "708090", "SlateGray",
+        "2F4F4F", "DarkSlateGray",
+      ] */
+  });
+</script>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('backend.layouts.app', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
